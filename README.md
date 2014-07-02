@@ -1,4 +1,4 @@
-com.digregorio.nativecamera
+com.wezka.nativecamera
 ==========================
 
 This is a fork of the official camera plugin from Apache.
