@@ -1,7 +1,7 @@
 com.wezka.nativecamera
 ==========================
 
-This is a fork of the official camera plugin from Apache.
+This is a fork of the official camera plugin from Apache - JUST FOR ANDROID
 
 It uses a custom activity to run in the foreground in Android to prevent Cordova from being killed.
 
