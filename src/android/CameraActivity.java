@@ -244,7 +244,7 @@ public class CameraActivity extends Activity implements SensorEventListener {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)){
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
             Parameters p = camera.getParameters();
             p.setRotation(degrees);
             camera.setParameters(p);
@@ -252,8 +252,10 @@ public class CameraActivity extends Activity implements SensorEventListener {
                 return false;
             pressed = true;
             camera.takePicture(null, null, mPicture);
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
-        return true;
     }
 
     private PictureCallback mPicture = new PictureCallback() {
