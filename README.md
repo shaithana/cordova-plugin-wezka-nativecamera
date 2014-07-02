@@ -7,7 +7,7 @@ It uses a custom activity to run in the foreground in Android to prevent Cordova
 
 It is adapted from https://code.google.com/p/foreground-camera-plugin/
 
-It offers advanced features such as flash support (auto/on/off), the tap-focus and the correct handling of image rotation.
+It offers advanced features such as flash support (auto/on/off), the tap-focus/exposure and the correct handling of image rotation.
 
 
 To install this plugin, follow the [Command-line Interface Guide](http://cordova.apache.org/docs/en/edge/guide_cli_index.md.html#The%20Command-line%20Interface).
