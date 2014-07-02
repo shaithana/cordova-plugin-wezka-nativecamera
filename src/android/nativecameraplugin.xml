@@ -1,0 +1,67 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.myapplication.app.MainActivity">
+
+    <SurfaceView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/flipCamera"
+            android:layout_height="37dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/btn_flip"
+            android:layout_width="38dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="30dp" />
+
+        <Button
+            android:id="@+id/captureButton"
+            android:layout_height="91dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_shot"
+            android:layout_width="91dp"
+            android:layout_marginBottom="20dp" />
+
+        <Button
+            android:id="@+id/flashButton"
+            android:layout_height="37dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/btn_flash_no"
+            android:layout_width="38dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginRight="20dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/viewfinderArea"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="125dp"
+        android:orientation="horizontal"
+        android:background="#00000000">
+
+        <ImageView
+            android:id="@+id/viewfinder"
+            android:layout_height="72dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/viewfinder"
+            android:layout_width="72dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
