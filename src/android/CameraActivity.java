@@ -281,10 +281,15 @@ public class CameraActivity extends Activity implements SensorEventListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (Camera.getNumberOfCameras() > 1) {
+        if (Camera.getNumberOfCameras() >= 1) {
             camera = Camera.open(cam);
         }
-        startPreview();
+
+        // Initialize preview if surface still exists
+        if (preview.getHeight() > 0) {
+            initPreview(preview.getHeight());
+            startPreview();
+        }
     }
 
     private float pxFromDp(float dp) {
