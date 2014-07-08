@@ -409,7 +409,9 @@ public class CameraActivity extends Activity implements SensorEventListener {
 
         public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                    int height) {
-            camera.setDisplayOrientation(90);
+            if (camera != null) {
+                camera.setDisplayOrientation(90);
+            }
             initPreview(preview.getHeight());
             startPreview();
         }

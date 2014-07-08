@@ -28,11 +28,11 @@
 
         <Button
             android:id="@+id/captureButton"
-            android:layout_height="91dp"
+            android:layout_height="66dp"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
             android:background="@drawable/btn_shot"
-            android:layout_width="91dp"
+            android:layout_width="66dp"
             android:layout_marginBottom="20dp" />
 
         <Button
