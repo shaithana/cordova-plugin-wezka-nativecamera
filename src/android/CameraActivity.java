@@ -431,6 +431,13 @@ public class CameraActivity extends Activity implements SensorEventListener {
     };
 
     @Override
+    protected void onDestroy() {
+        // Stop listening to sensor
+        sm.unregisterListener(this);
+        super.onDestroy();
+    }
+
+    @Override
     public void onSensorChanged(SensorEvent event) {
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
