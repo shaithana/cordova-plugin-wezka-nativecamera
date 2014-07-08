@@ -99,6 +99,7 @@ public class CameraActivity extends Activity implements SensorEventListener {
         final int imgFlashOn = getResources().getIdentifier("@drawable/btn_flash_on", null, getPackageName());
         viewfinderHalfPx = pxFromDp(72)/2;
         previewHolder = preview.getHolder();
+        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         previewHolder.addCallback(surfaceCallback);
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -126,10 +127,9 @@ public class CameraActivity extends Activity implements SensorEventListener {
         }
 
         Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
+        // Necessary to use deprecated methods for Android 2.x support
+        screenWidth = display.getWidth();
+        screenHeight = display.getHeight();
 
 
         focusButton.setOnTouchListener(new View.OnTouchListener() {
