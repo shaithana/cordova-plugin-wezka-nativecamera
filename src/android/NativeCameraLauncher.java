@@ -147,6 +147,12 @@ public class NativeCameraLauncher extends CordovaPlugin {
 							.decodeStream(resolver.openInputStream(uri));
 				}
 
+				// If bitmap cannot be decoded, this may return null
+				if (bitmap == null) {
+					this.failPicture("Error decoding image.");
+					return;
+				}
+
 				bitmap = scaleBitmap(bitmap);
 
 				// Create entry in media store for image
