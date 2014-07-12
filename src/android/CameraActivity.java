@@ -238,12 +238,17 @@ public class CameraActivity extends Activity implements SensorEventListener {
                 p.setRotation(degrees);
                 camera.setParameters(p);
                 pressed = true;
-                // Auto-focus first
-                camera.autoFocus(new AutoFocusCallback() {
-                    public void onAutoFocus(boolean success, Camera camera) {
-                        camera.takePicture(null, null, mPicture);
-                    }
-                });
+                // Auto-focus first, catching rare autofocus error
+                try {
+                    camera.autoFocus(new AutoFocusCallback() {
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            camera.takePicture(null, null, mPicture);
+                        }
+                    });
+                } catch (RuntimeException ex) {
+                    // Auto focus crash. Ignore.
+                    Log.e(TAG, "Auto-focus crash");
+                }
             }
         });
 
@@ -258,12 +263,17 @@ public class CameraActivity extends Activity implements SensorEventListener {
             if (pressed || camera == null)
                 return false;
             pressed = true;
-            // Auto-focus first
-            camera.autoFocus(new AutoFocusCallback() {
-                public void onAutoFocus(boolean success, Camera camera) {
-                    camera.takePicture(null, null, mPicture);
-                }
-            });
+            // Auto-focus first, catching rare autofocus error
+            try {
+                camera.autoFocus(new AutoFocusCallback() {
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        camera.takePicture(null, null, mPicture);
+                    }
+                });
+            } catch (RuntimeException ex) {
+                // Auto focus crash. Ignore.
+                Log.e(TAG, "Auto-focus crash");
+            }
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
