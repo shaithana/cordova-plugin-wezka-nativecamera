@@ -38,6 +38,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.hardware.Camera.Parameters;
@@ -267,13 +268,23 @@ public class CameraActivity extends Activity implements SensorEventListener {
             try {
                 camera.autoFocus(new AutoFocusCallback() {
                     public void onAutoFocus(boolean success, Camera camera) {
-                        camera.takePicture(null, null, mPicture);
+                        // Catch take picture error
+                        try {
+                            camera.takePicture(null, null, mPicture);
+                        } catch (RuntimeException ex) {
+                            // takePicture crash. Ignore.
+                            Toast.makeText(getApplicationContext(), 
+                                "Error taking picture", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Auto-focus crash");
+                        }
                     }
                 });
             } catch (RuntimeException ex) {
                 // Auto focus crash. Ignore.
+                Toast.makeText(getApplicationContext(), 
+                    "Error focusing", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Auto-focus crash");
-            }
+            }            
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
