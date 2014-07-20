@@ -67,8 +67,8 @@ public class CameraActivity extends Activity implements SensorEventListener {
     private int cam = 0;
     private boolean pressed = false;
     private int degrees = 0;
-    private Boolean isFlash = false;
-    private Boolean isFrontCamera = false;
+    private boolean isFlash = false;
+    private boolean isFrontCamera = false;
     SensorManager sm;
     WindowManager mWindowManager;
 
@@ -100,9 +100,6 @@ public class CameraActivity extends Activity implements SensorEventListener {
         final int imgFlashAuto = getResources().getIdentifier("@drawable/btn_flash_auto", null, getPackageName());
         final int imgFlashOn = getResources().getIdentifier("@drawable/btn_flash_on", null, getPackageName());
         viewfinderHalfPx = pxFromDp(72)/2;
-        previewHolder = preview.getHolder();
-        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        previewHolder.addCallback(surfaceCallback);
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         if(sm.getSensorList(Sensor.TYPE_ACCELEROMETER).size()!=0){
@@ -324,6 +321,9 @@ public class CameraActivity extends Activity implements SensorEventListener {
     @Override
     public void onResume() {
         super.onResume();
+        previewHolder = preview.getHolder();
+        previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        previewHolder.addCallback(surfaceCallback);
         if (Camera.getNumberOfCameras() >= 1) {
             camera = Camera.open(cam);
         }
