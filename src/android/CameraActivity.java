@@ -38,9 +38,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.hardware.Camera.Parameters;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.widget.TextView;
 
@@ -230,13 +232,34 @@ public class CameraActivity extends Activity implements SensorEventListener {
 
         captureButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (pressed || camera == null)
+                    return;
+                
                 Parameters p = camera.getParameters();
                 p.setRotation(degrees);
                 camera.setParameters(p);
-                if (pressed || camera == null)
-                    return;
                 pressed = true;
-                camera.takePicture(null, null, mPicture);
+                // Auto-focus first, catching rare autofocus error
+                try {
+                    camera.autoFocus(new AutoFocusCallback() {
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            // Catch take picture error
+                            try {
+                                camera.takePicture(null, null, mPicture);
+                            } catch (RuntimeException ex) {
+                                // takePicture crash. Ignore.
+                                Toast.makeText(getApplicationContext(), 
+                                    "Error taking picture", Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, "Auto-focus crash");
+                            }
+                        }
+                    });
+                } catch (RuntimeException ex) {
+                    // Auto focus crash. Ignore.
+                    Toast.makeText(getApplicationContext(), 
+                        "Error focusing", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Auto-focus crash");
+                }            
             }
         });
 
@@ -251,7 +274,27 @@ public class CameraActivity extends Activity implements SensorEventListener {
             if (pressed || camera == null)
                 return false;
             pressed = true;
-            camera.takePicture(null, null, mPicture);
+            // Auto-focus first, catching rare autofocus error
+            try {
+                camera.autoFocus(new AutoFocusCallback() {
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        // Catch take picture error
+                        try {
+                            camera.takePicture(null, null, mPicture);
+                        } catch (RuntimeException ex) {
+                            // takePicture crash. Ignore.
+                            Toast.makeText(getApplicationContext(), 
+                                "Error taking picture", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "Auto-focus crash");
+                        }
+                    }
+                });
+            } catch (RuntimeException ex) {
+                // Auto focus crash. Ignore.
+                Toast.makeText(getApplicationContext(), 
+                    "Error focusing", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Auto-focus crash");
+            }            
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
