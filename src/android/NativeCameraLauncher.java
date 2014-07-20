@@ -179,21 +179,28 @@ public class NativeCameraLauncher extends CordovaPlugin {
 					}
 				}
 
+				// Get real path
+				String realPath = getRealPathFromURI(uri, this.cordova);
+
+				// Create directories
+				File outputFile = new File(realPath);
+				outputFile.getParentFile().mkdirs();
+
 				// Add compressed version of captured image to returned media
 				// store Uri
 				bitmap = getRotatedBitmap(rotate, bitmap, exif);
+				Log.i(LOG_TAG, "URI: " + uri.toString());
 				OutputStream os = this.cordova.getActivity().getContentResolver()
 						.openOutputStream(uri);
 				bitmap.compress(Bitmap.CompressFormat.JPEG, this.mQuality, os);
 				os.close();
 
 				// Restore exif data to file
-				exif.createOutFile(getRealPathFromURI(uri, this.cordova));
+				exif.createOutFile(realPath);
 				exif.writeExifData();
 
 				// Send Uri back to JavaScript for viewing image
 				this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, uri.toString()));
-//						getRealPathFromURI(uri, this.cordova))); WRONG. Needs URI
 
 				bitmap.recycle();
 				bitmap = null;
