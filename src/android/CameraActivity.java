@@ -149,6 +149,9 @@ public class CameraActivity extends Activity implements SensorEventListener {
                     focusRect = new Rect(-100, -100, 100, 100);
                 }
 
+                if (camera == null)
+                    return true;
+
                 Parameters parameters = camera.getParameters();
 
                 if (parameters.getMaxNumFocusAreas() > 0) {
@@ -407,16 +410,23 @@ public class CameraActivity extends Activity implements SensorEventListener {
                     parameters.setPictureSize(pictureSize.width, pictureSize.height);
 
                     parameters.setPictureFormat(ImageFormat.JPEG);
-                    if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                    } else if (parameters.getSupportedFocusModes().contains(android.hardware.Camera.Parameters.FOCUS_MODE_AUTO)) {
-                        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                    // For Android 2.3.4 quirk
+                    if (parameters.getSupportedFocusModes() != null) {
+                        if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                        } else if (parameters.getSupportedFocusModes().contains(android.hardware.Camera.Parameters.FOCUS_MODE_AUTO)) {
+                            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                        }
                     }
-                    if (parameters.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_AUTO)) {
-                        parameters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+                    if (parameters.getSupportedSceneModes() != null) {
+                        if (parameters.getSupportedSceneModes().contains(Camera.Parameters.SCENE_MODE_AUTO)) {
+                            parameters.setSceneMode(Camera.Parameters.SCENE_MODE_AUTO);
+                        }
                     }
-                    if (parameters.getSupportedWhiteBalance().contains(Camera.Parameters.WHITE_BALANCE_AUTO)) {
-                        parameters.setSceneMode(Camera.Parameters.WHITE_BALANCE_AUTO);
+                    if (parameters.getSupportedWhiteBalance() != null) {
+                        if (parameters.getSupportedWhiteBalance().contains(Camera.Parameters.WHITE_BALANCE_AUTO)) {
+                            parameters.setSceneMode(Camera.Parameters.WHITE_BALANCE_AUTO);
+                        }
                     }
                     cameraConfigured=true;
                     camera.setParameters(parameters);
