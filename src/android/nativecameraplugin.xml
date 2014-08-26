@@ -22,9 +22,9 @@
             android:layout_height="37dp"
             android:layout_alignParentBottom="true"
             android:background="@drawable/btn_flip"
-            android:layout_width="38dp"
+            android:layout_width="53dp"
             android:layout_marginBottom="30dp"
-            android:layout_marginLeft="30dp" />
+            android:layout_marginLeft="20dp" />
 
         <Button
             android:id="@+id/captureButton"
