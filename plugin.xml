@@ -40,9 +40,9 @@
             </activity>
         </config-file>
 
-        <source-file src="src/android/CameraActivity.java" target-dir="src/com/wezka/nativecameraplugin" />
-        <source-file src="src/android/NativeCameraLauncher.java" target-dir="src/com/wezka/nativecameraplugin" />
-        <source-file src="src/android/ExifHelper.java" target-dir="src/com/wezka/nativecameraplugin" />
+        <source-file src="src/android/CameraActivity.java" target-dir="src/com/wezka/nativecamera" />
+        <source-file src="src/android/NativeCameraLauncher.java" target-dir="src/com/wezka/nativecamera" />
+        <source-file src="src/android/ExifHelper.java" target-dir="src/com/wezka/nativecamera" />
         <source-file src="src/android/nativecameraplugin.xml" target-dir="res/layout" />
         <source-file src="res/btn_shot.png" target-dir="res/drawable" />
         <source-file src="res/btn_flip.png" target-dir="res/drawable" />
