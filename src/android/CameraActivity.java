@@ -425,7 +425,7 @@ public class CameraActivity extends Activity implements SensorEventListener {
                     }
                     if (parameters.getSupportedWhiteBalance() != null) {
                         if (parameters.getSupportedWhiteBalance().contains(Camera.Parameters.WHITE_BALANCE_AUTO)) {
-                            parameters.setSceneMode(Camera.Parameters.WHITE_BALANCE_AUTO);
+                            parameters.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
                         }
                     }
                     cameraConfigured=true;

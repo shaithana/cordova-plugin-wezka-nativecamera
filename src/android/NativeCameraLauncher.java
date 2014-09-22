@@ -69,7 +69,6 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	private int targetHeight;
 	private Uri imageUri;
 	private File photo;
-	private int numPics;
 	private static final String _DATA = "_data";
 	private CallbackContext callbackContext;
 
@@ -109,7 +108,6 @@ public class NativeCameraLauncher extends CordovaPlugin {
 
 	public void takePicture() {
 		// Save the number of images currently on disk for later
-		this.numPics = queryImgDB().getCount();
 		Intent intent = new Intent(this.cordova.getActivity().getApplicationContext(), CameraActivity.class);
 		this.photo = createCaptureFile();
 		this.imageUri = Uri.fromFile(photo);
@@ -155,58 +153,25 @@ public class NativeCameraLauncher extends CordovaPlugin {
 
 				bitmap = scaleBitmap(bitmap);
 
-				// Create entry in media store for image
-				// (Don't use insertImage() because it uses default compression
-				// setting of 50 - no way to change it)
-				ContentValues values = new ContentValues();
-				values.put(android.provider.MediaStore.Images.Media.MIME_TYPE,
-						"image/jpeg");
-				Uri uri = null;
-				try {
-					uri = this.cordova.getActivity().getContentResolver()
-							.insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-									values);
-				} catch (UnsupportedOperationException e) {
-					LOG.d(LOG_TAG, "Can't write to external media storage.");
-					try {
-						uri = this.cordova.getActivity().getContentResolver()
-								.insert(android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI,
-										values);
-					} catch (UnsupportedOperationException ex) {
-						LOG.d(LOG_TAG, "Can't write to internal media storage.");
-						this.failPicture("Error capturing image - no media storage found.");
-						return;
-					}
-				}
-
-				// Get real path
-				String realPath = getRealPathFromURI(uri, this.cordova);
-
-				// Create directories
-				File outputFile = new File(realPath);
-				outputFile.getParentFile().mkdirs();
-
 				// Add compressed version of captured image to returned media
 				// store Uri
 				bitmap = getRotatedBitmap(rotate, bitmap, exif);
-				Log.i(LOG_TAG, "URI: " + uri.toString());
+				Log.i(LOG_TAG, "URI: " + this.imageUri.toString());
 				OutputStream os = this.cordova.getActivity().getContentResolver()
-						.openOutputStream(uri);
+						.openOutputStream(this.imageUri);
 				bitmap.compress(Bitmap.CompressFormat.JPEG, this.mQuality, os);
 				os.close();
 
 				// Restore exif data to file
-				exif.createOutFile(realPath);
+				exif.createOutFile(this.imageUri.getPath());
 				exif.writeExifData();
 
 				// Send Uri back to JavaScript for viewing image
-				this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, uri.toString()));
+				this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, this.imageUri.toString()));
 
 				bitmap.recycle();
 				bitmap = null;
 				System.gc();
-
-				checkForDuplicateImage();
 			} catch (IOException e) {
 				e.printStackTrace();
 				this.failPicture("Error capturing image.");
@@ -280,29 +245,6 @@ public class NativeCameraLauncher extends CordovaPlugin {
         return bitmap;
     }
 
-	private Cursor queryImgDB() {
-		return this.cordova.getActivity().getContentResolver().query(
-				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-				new String[] { MediaStore.Images.Media._ID }, null, null, null);
-	}
-
-	private void checkForDuplicateImage() {
-		int diff = 2;
-		Cursor cursor = queryImgDB();
-		int currentNumOfImages = cursor.getCount();
-
-		// delete the duplicate file if the difference is 2 for file URI or 1
-		// for Data URL
-		if ((currentNumOfImages - numPics) == diff) {
-			cursor.moveToLast();
-			int id = Integer.valueOf(cursor.getString(cursor
-					.getColumnIndex(MediaStore.Images.Media._ID))) - 1;
-			Uri uri = Uri.parse(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-					+ "/" + id);
-			this.cordova.getActivity().getContentResolver().delete(uri, null, null);
-		}
-	}
-
 	private String getTempDirectoryPath(Context ctx) {
 		File cache = null;
 
@@ -325,13 +267,5 @@ public class NativeCameraLauncher extends CordovaPlugin {
 		}
 
 		return cache.getAbsolutePath();
-	}
-
-	private String getRealPathFromURI(Uri contentUri, CordovaInterface ctx) {
-		String[] proj = { _DATA };
-		Cursor cursor = cordova.getActivity().managedQuery(contentUri, proj, null, null, null);
-		int column_index = cursor.getColumnIndexOrThrow(_DATA);
-		cursor.moveToFirst();
-		return cursor.getString(column_index);
 	}
 }
