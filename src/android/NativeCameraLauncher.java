@@ -14,6 +14,7 @@
    		limitations under the License.   			
  */
 
+
 package com.wezka.nativecamera;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Calendar;
 
 import org.apache.cordova.ExifHelper;
 import org.apache.cordova.CallbackContext;
@@ -71,6 +73,7 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	private File photo;
 	private static final String _DATA = "_data";
 	private CallbackContext callbackContext;
+	private String date = null;
 
 	public NativeCameraLauncher() {
 	}
@@ -116,7 +119,19 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	}
 
 	private File createCaptureFile() {
-		File photo = new File(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext()), "Pic.jpg");
+		File oldFile = new File(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext()), "Pic-" + this.date + ".jpg");
+		if(oldFile.exists())
+			oldFile.delete();
+		
+		Calendar c = Calendar.getInstance();
+	    this.date = "" + c.get(Calendar.DAY_OF_MONTH)
+					+ c.get(Calendar.MONTH)
+					+ c.get(Calendar.YEAR)
+					+ c.get(Calendar.HOUR_OF_DAY)
+					+ c.get(Calendar.MINUTE)
+					+ c.get(Calendar.SECOND);
+		
+		File photo = new File(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext()), "Pic-" + this.date + ".jpg");
 		return photo;
 	}
 
@@ -129,7 +144,7 @@ public class NativeCameraLauncher extends CordovaPlugin {
 				// during compression
 				ExifHelper exif = new ExifHelper();
 				exif.createInFile(getTempDirectoryPath(this.cordova.getActivity().getApplicationContext())
-						+ "/Pic.jpg");
+						+ "/Pic-" + this.date + ".jpg");
 				exif.readExifData();
 				rotate = exif.getOrientation();
 
