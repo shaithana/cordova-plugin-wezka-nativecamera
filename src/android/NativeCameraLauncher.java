@@ -26,7 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Calendar;
 
-import org.apache.cordova.ExifHelper;
+//import org.apache.cordova.ExifHelper;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -37,10 +37,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -75,6 +77,10 @@ public class NativeCameraLauncher extends CordovaPlugin {
 	private CallbackContext callbackContext;
 	private String date = null;
 
+	protected final static String[] PERMISSIONS = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+    public static final int PERMISSION_DENIED_ERROR = 20;
+    public static final int TAKE_PIC_SEC = 0;
+
 	public NativeCameraLauncher() {
 	}
 
@@ -95,10 +101,10 @@ public class NativeCameraLauncher extends CordovaPlugin {
 				this.targetHeight = args.getInt(4);
 				this.targetWidth = args.getInt(3);
 				this.mQuality = args.getInt(0);
-				this.takePicture();
-				PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
-				r.setKeepCallback(true);
-				callbackContext.sendPluginResult(r);
+				this.requestPermissions();
+                PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
+                r.setKeepCallback(true);
+                callbackContext.sendPluginResult(r);
 				return true;
 			}
 			return false;
@@ -108,6 +114,35 @@ public class NativeCameraLauncher extends CordovaPlugin {
 			return true;
 		}
 	}
+
+    public void requestPermissions(){
+
+        if(PermissionHelper.hasPermission(this, PERMISSIONS[0]) && PermissionHelper.hasPermission(this, PERMISSIONS[1])) {
+            takePicture();
+        } else {
+            PermissionHelper.requestPermissions(this, TAKE_PIC_SEC, PERMISSIONS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) throws JSONException
+    {
+        for(int r:grantResults)
+        {
+            if(r == PackageManager.PERMISSION_DENIED)
+            {
+                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
+                return;
+            }
+        }
+        switch(requestCode)
+        {
+            case TAKE_PIC_SEC:
+                takePicture();
+                break;
+        }
+    }
 
 	public void takePicture() {
 		// Save the number of images currently on disk for later
@@ -135,6 +170,7 @@ public class NativeCameraLauncher extends CordovaPlugin {
 		return photo;
 	}
 
+    @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// If image available
 		if (resultCode == Activity.RESULT_OK) {
